@@ -1,0 +1,142 @@
+@startuml Diagramme_Cas_Utilisation
+
+title Diagramme de Cas d'Utilisation - Système de Gestion Locative Blockchain
+
+left to right direction
+skinparam packageStyle rectangle
+
+' Acteurs
+actor "👤 Locataire" as Tenant #LightBlue
+actor "🏠 Propriétaire" as Landlord #LightGreen
+actor "👨‍💼 Administrateur" as Admin #Pink
+actor "⛓️ Blockchain\nEthereum" as Blockchain #LightYellow
+
+rectangle "Système de Gestion Locative" {
+  
+  ' Authentification
+  package "Authentification" #E3F2FD {
+    usecase "S'inscrire" as UC1
+    usecase "Se connecter" as UC2
+    usecase "Gérer profil" as UC3
+  }
+  
+  ' Gestion Propriétés
+  package "Gestion des Propriétés" #E8F5E9 {
+    usecase "Créer propriété" as UC4
+    usecase "Modifier propriété" as UC5
+    usecase "Consulter propriétés" as UC6
+    usecase "Rechercher propriété" as UC7
+  }
+  
+  ' Gestion Contrats
+  package "Gestion des Contrats" #FFF3E0 {
+    usecase "Créer contrat" as UC8
+    usecase "Signer contrat" as UC9
+    usecase "Déployer sur blockchain" as UC10
+    usecase "Consulter contrats" as UC11
+    usecase "Résilier contrat" as UC12
+  }
+  
+  ' Gestion Paiements
+  package "Gestion des Paiements" #F3E5F5 {
+    usecase "Effectuer paiement" as UC13
+    usecase "Consulter paiements" as UC14
+    usecase "Calculer pénalités" as UC15
+    usecase "Retirer fonds" as UC16
+  }
+  
+  ' Gestion Litiges
+  package "Gestion des Litiges" #FFEBEE {
+    usecase "Déposer litige" as UC17
+    usecase "Consulter litiges" as UC18
+    usecase "Résoudre litige" as UC19
+  }
+  
+  ' Dashboard
+  package "Dashboard" #E0F2F1 {
+    usecase "Voir tableau de bord" as UC20
+  }
+}
+
+' ========== Relations Locataire ==========
+Tenant --> UC1
+Tenant --> UC2
+Tenant --> UC3
+Tenant --> UC6
+Tenant --> UC7
+Tenant --> UC9
+Tenant --> UC11
+Tenant --> UC13
+Tenant --> UC14
+Tenant --> UC17
+Tenant --> UC18
+Tenant --> UC20
+
+' ========== Relations Propriétaire ==========
+Landlord --> UC1
+Landlord --> UC2
+Landlord --> UC3
+Landlord --> UC4
+Landlord --> UC5
+Landlord --> UC6
+Landlord --> UC7
+Landlord --> UC8
+Landlord --> UC9
+Landlord --> UC11
+Landlord --> UC12
+Landlord --> UC14
+Landlord --> UC16
+Landlord --> UC17
+Landlord --> UC18
+Landlord --> UC20
+
+' ========== Relations Administrateur ==========
+Admin --> UC2
+Admin --> UC18
+Admin --> UC19
+
+' ========== Relations Blockchain ==========
+UC10 ..> Blockchain : utilise
+UC13 ..> Blockchain : utilise
+UC17 ..> Blockchain : utilise
+
+' ========== Dépendances entre UC ==========
+
+' Créer contrat nécessite créer propriété
+UC8 .> UC4 : <<require>>
+
+' Signer contrat inclut le déploiement blockchain
+UC9 .> UC10 : <<include>>
+
+' Déployer sur blockchain est automatique
+UC10 .> UC15 : <<include>>
+
+' Paiement nécessite contrat signé
+UC13 .> UC9 : <<require>>
+
+' Paiement calcule les pénalités
+UC13 .> UC15 : <<include>>
+
+' Litige nécessite contrat actif
+UC17 .> UC9 : <<require>>
+
+' Notes explicatives
+note right of UC10
+  Déploie automatiquement:
+  • RentalContract.sol
+  • PaymentManager.sol
+  • DisputeManager.sol
+end note
+
+note bottom of UC13
+  Paiement via MetaMask
+  Enregistrement sur blockchain
+  avec hash de transaction
+end note
+
+note right of UC15
+  Calcul automatique:
+  (jours - grace) × taux × montant / 100
+end note
+
+@enduml

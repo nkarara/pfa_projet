@@ -1,0 +1,102 @@
+@startuml Diagramme_Classes_Simplifie
+
+title Diagramme de Classes - Système de Gestion Locative Blockchain
+
+' Modèles de données
+class User {
+  +id: int
+  +email: string
+  +passwordHash: string
+  +role: enum
+  +blockchainAddress: string
+  --
+  +comparePassword()
+  +toSafeObject()
+}
+
+class Property {
+  +id: int
+  +ownerId: int
+  +address: string
+  +type: string
+  +area: decimal
+  +status: enum
+  +monthlyRent: decimal
+}
+
+class Contract {
+  +id: int
+  +propertyId: int
+  +landlordId: int
+  +tenantId: int
+  +smartContractAddress: string
+  +rentAmount: decimal
+  +durationMonths: int
+  +depositAmount: decimal
+  +status: enum
+  +landlordSigned: boolean
+  +tenantSigned: boolean
+}
+
+class Payment {
+  +id: int
+  +contractId: int
+  +dueDate: date
+  +amount: decimal
+  +status: enum
+  +transactionHash: string
+}
+
+class Dispute {
+  +id: int
+  +contractId: int
+  +filedBy: int
+  +description: text
+  +status: enum
+  +resolution: text
+}
+
+' Smart Contracts
+class RentalContract <<Smart Contract>> {
+  +landlord: address
+  +tenant: address
+  +rentAmount: uint256
+  +depositAmount: uint256
+  --
+  +signContract()
+  +terminateContract()
+}
+
+class PaymentManager <<Smart Contract>> {
+  +landlord: address
+  +tenant: address
+  +rentAmount: uint256
+  +penaltyRate: uint256
+  --
+  +makePayment()
+  +calculatePenalty()
+  +withdrawFunds()
+}
+
+class DisputeManager <<Smart Contract>> {
+  +landlord: address
+  +tenant: address
+  +arbitrator: address
+  --
+  +fileDispute()
+  +resolveDispute()
+}
+
+' Relations
+User "1" -- "0..*" Property : possède >
+User "1" -- "0..*" Contract : propriétaire >
+User "1" -- "0..*" Contract : locataire >
+Property "1" -- "0..*" Contract : a >
+Contract "1" -- "0..*" Payment : génère >
+Contract "1" -- "0..*" Dispute : a >
+
+Contract ..> RentalContract : déployé comme
+Contract ..> PaymentManager : déployé comme
+Contract ..> DisputeManager : déployé comme
+
+@enduml

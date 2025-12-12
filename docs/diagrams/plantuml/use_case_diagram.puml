@@ -1,0 +1,90 @@
+@startuml Diagramme_Cas_Utilisation
+
+title Diagramme de Cas d'Utilisation - Système de Gestion Locative
+
+left to right direction
+
+' Acteurs
+actor "Locataire" as Tenant
+actor "Propriétaire" as Landlord
+actor "Administrateur" as Admin
+actor "Blockchain" as BC
+
+' Système
+rectangle "Système de Gestion Locative" {
+  
+  package "Authentification" {
+    usecase "S'inscrire" as UC1
+    usecase "Se connecter" as UC2
+    usecase "Gérer profil" as UC3
+  }
+  
+  package "Gestion Propriétés" {
+    usecase "Créer propriété" as UC4
+    usecase "Consulter propriétés" as UC5
+    usecase "Modifier propriété" as UC6
+  }
+  
+  package "Gestion Contrats" {
+    usecase "Créer contrat" as UC7
+    usecase "Signer contrat" as UC8
+    usecase "Consulter contrats" as UC9
+    usecase "Résilier contrat" as UC10
+  }
+  
+  package "Gestion Paiements" {
+    usecase "Effectuer paiement" as UC11
+    usecase "Consulter historique" as UC12
+    usecase "Retirer fonds" as UC13
+  }
+  
+  package "Gestion Litiges" {
+    usecase "Déposer litige" as UC14
+    usecase "Consulter litiges" as UC15
+    usecase "Résoudre litige" as UC16
+  }
+}
+
+' Relations Locataire
+Tenant --> UC1
+Tenant --> UC2
+Tenant --> UC3
+Tenant --> UC5
+Tenant --> UC8
+Tenant --> UC9
+Tenant --> UC11
+Tenant --> UC12
+Tenant --> UC14
+Tenant --> UC15
+
+' Relations Propriétaire
+Landlord --> UC1
+Landlord --> UC2
+Landlord --> UC3
+Landlord --> UC4
+Landlord --> UC5
+Landlord --> UC6
+Landlord --> UC7
+Landlord --> UC8
+Landlord --> UC9
+Landlord --> UC10
+Landlord --> UC12
+Landlord --> UC13
+Landlord --> UC14
+Landlord --> UC15
+
+' Relations Administrateur
+Admin --> UC15
+Admin --> UC16
+
+' Relations Blockchain
+UC8 ..> BC : utilise
+UC11 ..> BC : utilise
+UC14 ..> BC : utilise
+
+' Dépendances
+UC7 .> UC4 : <<include>>
+UC8 .> UC7 : <<require>>
+UC11 .> UC8 : <<require>>
+
+@enduml

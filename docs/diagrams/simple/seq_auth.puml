@@ -1,0 +1,17 @@
+@startuml
+
+title Séquence : Authentification
+
+actor Utilisateur
+participant Frontend
+participant API
+database DB
+
+Utilisateur -> Frontend: Entrer email + password
+Frontend -> API: POST /login
+API -> DB: Vérifier credentials
+DB --> API: User trouvé
+API --> Frontend: Token JWT
+Frontend --> Utilisateur: Connexion réussie
+
+@enduml

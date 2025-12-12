@@ -1,0 +1,61 @@
+@startuml Sequence_Paiement
+
+title Séquence : Paiement de Loyer
+
+actor "Locataire" as Tenant
+participant "Frontend" as UI
+participant "MetaMask" as MM
+participant "PaymentController" as Ctrl
+participant "BlockchainService" as BC
+database "PostgreSQL" as DB
+participant "Ganache" as Chain
+participant "PaymentManager.sol" as SC
+
+== Consultation Paiements ==
+Tenant -> UI: Accès page Paiements
+UI -> Ctrl: GET /api/payments?status=pending
+Ctrl -> DB: SELECT * WHERE status = 'pending'
+DB --> Ctrl: Liste paiements
+Ctrl --> UI: Paiements dus
+UI --> Tenant: Affichage paiements
+
+== Effectuer Paiement ==
+Tenant -> UI: Clic "Payer"
+UI -> MM: Demande confirmation transaction
+MM --> Tenant: Popup confirmation
+Tenant -> MM: Approuver
+
+UI -> Ctrl: POST /api/payments/:id/pay
+Ctrl -> DB: SELECT payment + contract
+DB --> Ctrl: Payment data
+
+Ctrl -> BC: getContractInstance()
+BC --> Ctrl: PaymentManager instance
+
+Ctrl -> BC: makePayment(paymentIndex)
+BC -> MM: Transaction request
+MM -> Chain: Send ETH transaction
+Chain -> SC: makePayment(paymentIndex)
+
+SC -> SC: Check not already paid
+SC -> SC: calculatePenalty()
+
+alt Paiement en retard
+    SC -> SC: penalty = (days * rate * amount) / 100
+else À temps
+    SC -> SC: penalty = 0
+end
+
+SC -> SC: Update payment.isPaid = true
+SC -> SC: emit PaymentMade(id, amount, penalty)
+
+Chain --> BC: Transaction receipt + hash
+BC --> Ctrl: transactionHash
+
+Ctrl -> DB: UPDATE status = 'paid', transactionHash, penalty
+DB --> Ctrl: Paiement mis à jour
+
+Ctrl --> UI: 200 OK
+UI --> Tenant: Paiement confirmé ✓
+
+@enduml

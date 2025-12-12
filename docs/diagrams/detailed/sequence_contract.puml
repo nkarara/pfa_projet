@@ -1,0 +1,240 @@
+@startuml
+
+title Séquence Détaillée : Création et Déploiement de Contrat
+
+autonumber
+skinparam sequenceMessageAlign center
+
+actor "Propriétaire" as Landlord
+actor "Locataire" as Tenant
+participant "Frontend\nReact" as UI
+participant "ContractController" as Ctrl
+participant "Contract Model" as CModel
+participant "Property Model" as PModel
+participant "BlockchainService" as BC
+database "PostgreSQL" as DB
+participant "Web3" as Web3
+participant "Ganache\n(Blockchain)" as Chain
+participant "RentalContract.sol" as RC
+participant "PaymentManager.sol" as PM
+participant "DisputeManager.sol" as DM
+
+== Phase 1 : Création du Contrat ==
+
+Landlord -> UI: Naviguer vers "Créer Contrat"
+activate UI
+
+UI -> Ctrl: GET /api/properties?ownerId={landlordId}
+activate Ctrl
+Ctrl -> PModel: findAll({where: {ownerId}})
+activate PModel
+PModel -> DB: SELECT * FROM properties WHERE owner_id = ?
+activate DB
+DB --> PModel: Liste des propriétés
+deactivate DB
+PModel --> Ctrl: Properties[]
+deactivate PModel
+Ctrl --> UI: 200 OK {properties}
+deactivate Ctrl
+UI --> Landlord: Afficher formulaire avec propriétés
+deactivate UI
+
+Landlord -> UI: Remplir formulaire\n(propertyId, tenantEmail, rentAmount, duration, deposit, terms)
+activate UI
+
+UI -> Ctrl: POST /api/contracts\n{propertyId, tenantEmail, rentAmount, durationMonths, depositAmount, terms}
+activate Ctrl
+
+Ctrl -> CModel: findOne tenant by email
+activate CModel
+CModel -> DB: SELECT * FROM users WHERE email = ?
+activate DB
+DB --> CModel: Tenant data
+deactivate DB
+CModel --> Ctrl: Tenant object
+deactivate CModel
+
+Ctrl -> CModel: create({propertyId, landlordId, tenantId, rentAmount, ...})
+activate CModel
+CModel -> DB: INSERT INTO contracts\n(status='draft', landlord_signed=false, tenant_signed=false)
+activate DB
+DB --> CModel: Contract créé avec id
+deactivate DB
+CModel --> Ctrl: Contract object
+deactivate CModel
+
+Ctrl --> UI: 201 Created {contract}
+deactivate Ctrl
+UI --> Landlord: Contrat créé ✓\nEn attente de signature
+deactivate UI
+
+== Phase 2 : Signature du Propriétaire ==
+
+Landlord -> UI: Cliquer "Signer le contrat"
+activate UI
+
+UI -> Ctrl: POST /api/contracts/:id/sign\nHeaders: {Authorization: Bearer {token}}
+activate Ctrl
+
+Ctrl -> Ctrl: Extraire userId du JWT token
+
+Ctrl -> CModel: findByPk(contractId)
+activate CModel
+CModel -> DB: SELECT * FROM contracts WHERE id = ?
+activate DB
+DB --> CModel: Contract data
+deactivate DB
+CModel --> Ctrl: Contract object
+deactivate CModel
+
+Ctrl -> Ctrl: Vérifier si userId == landlordId
+
+Ctrl -> CModel: update({landlordSigned: true, status: 'pending_signature'})
+activate CModel
+CModel -> DB: UPDATE contracts\nSET landlord_signed = true, status = 'pending_signature'
+activate DB
+DB --> CModel: Contrat mis à jour
+deactivate DB
+CModel --> Ctrl: Updated contract
+deactivate CModel
+
+Ctrl --> UI: 200 OK {contract}
+deactivate Ctrl
+
+UI --> Landlord: Signature enregistrée ✓
+UI -> Tenant: Notification email/app\n"Contrat prêt pour votre signature"
+deactivate UI
+
+== Phase 3 : Signature du Locataire et Déploiement ==
+
+Tenant -> UI: Consulter contrat et cliquer "Signer"
+activate UI
+
+UI -> Ctrl: POST /api/contracts/:id/sign
+activate Ctrl
+
+Ctrl -> CModel: findByPk(contractId, {include: Property})
+activate CModel
+CModel -> DB: SELECT contracts, properties WHERE contract.id = ?
+activate DB
+DB --> CModel: Contract + Property data
+deactivate DB
+CModel --> Ctrl: Contract object
+deactivate CModel
+
+Ctrl -> Ctrl: Vérifier landlordSigned == true
+Ctrl -> Ctrl: Vérifier userId == tenantId
+
+Ctrl -> CModel: update({tenantSigned: true})
+activate CModel
+CModel -> DB: UPDATE contracts SET tenant_signed = true
+activate DB
+DB --> CModel: Updated
+deactivate DB
+deactivate CModel
+
+note over Ctrl
+  Les deux parties ont signé
+  Déploiement automatique
+  des smart contracts
+end note
+
+== Déploiement RentalContract ==
+
+Ctrl -> BC: deployRentalContract(landlord.blockchainAddress, {\ntenant: tenant.blockchainAddress,\nrentAmount, depositAmount, durationMonths,\npropertyAddress, terms})
+activate BC
+
+BC -> Web3: new Contract(RentalContractABI)
+activate Web3
+Web3 -> Web3: contract.deploy({data: bytecode, arguments: [...]})
+
+Web3 -> Chain: Send deployment transaction
+activate Chain
+Chain -> RC: new RentalContract(tenant, rentAmount, deposit, ...)
+activate RC
+RC -> RC: this.landlord = msg.sender
+RC -> RC: this.tenant = _tenant
+RC -> RC: Initialiser toutes les variables
+RC --> Chain: Contract déployé
+deactivate RC
+Chain --> Web3: Transaction receipt + contract address
+deactivate Chain
+
+Web3 --> BC: smartContractAddress
+deactivate Web3
+deactivate BC
+
+== Déploiement PaymentManager ==
+
+Ctrl -> BC: deployPaymentManager(landlord.blockchainAddress, {\ntenant: tenant.blockchainAddress,\nrentAmount, startDate, durationMonths,\npenaltyRate: 5, gracePeriodDays: 3})
+activate BC
+
+BC -> Web3: new Contract(PaymentManagerABI)
+activate Web3
+Web3 -> Chain: Send deployment transaction
+activate Chain
+Chain -> PM: new PaymentManager(tenant, rentAmount, startDate, ...)
+activate PM
+PM -> PM: this.landlord = msg.sender
+PM -> PM: this.tenant = _tenant
+PM -> PM: Générer calendrier de paiements
+loop Pour chaque mois
+    PM -> PM: payments[i] = Payment(dueDate, amount, false, 0, 0)
+end
+PM --> Chain: Contract déployé
+deactivate PM
+Chain --> Web3: paymentManagerAddress
+deactivate Chain
+Web3 --> BC: paymentManagerAddress
+deactivate Web3
+deactivate BC
+
+== Déploiement DisputeManager ==
+
+Ctrl -> BC: deployDisputeManager(landlord.blockchainAddress, tenant.blockchainAddress)
+activate BC
+
+BC -> Web3: new Contract(DisputeManagerABI)
+activate Web3
+Web3 -> Chain: Send deployment transaction
+activate Chain
+Chain -> DM: new DisputeManager(tenant, arbitrator)
+activate DM
+DM -> DM: this.landlord = msg.sender
+DM -> DM: this.tenant = _tenant
+DM -> DM: this.arbitrator = address(0)
+DM --> Chain: Contract déployé
+deactivate DM
+Chain --> Web3: disputeManagerAddress
+deactivate Chain
+Web3 --> BC: disputeManagerAddress
+deactivate Web3
+deactivate BC
+
+== Finalisation ==
+
+Ctrl -> CModel: update({\nsmartContractAddress,\npaymentManagerAddress,\ndisputeManagerAddress,\nstatus: 'active',\nstartDate: now,\nendDate: now + durationMonths})
+activate CModel
+CModel -> DB: UPDATE contracts SET\nsmart_contract_address = ?,\npayment_manager_address = ?,\ndispute_manager_address = ?,\nstatus = 'active',\nstart_date = ?, end_date = ?
+activate DB
+DB --> CModel: Contrat finalisé
+deactivate DB
+CModel --> Ctrl: Contract complet
+deactivate CModel
+
+Ctrl --> UI: 200 OK\n{contract, smartContractAddress, paymentManagerAddress, disputeManagerAddress}
+deactivate Ctrl
+
+UI --> Tenant: Contrat actif et déployé sur la blockchain ✓
+UI -> Landlord: Notification: "Contrat #{id} actif"
+deactivate UI
+
+note right of Chain
+  Les 3 smart contracts sont
+  maintenant déployés sur la blockchain.
+  Toutes les opérations futures
+  (paiements, litiges) seront
+  enregistrées de manière immuable.
+end note
+
+@enduml

@@ -1,0 +1,13 @@
+Error: rentalContractAddress is not defined
+Stack: ReferenceError: rentalContractAddress is not defined
+    at exports.createContract (C:\Users\NABIL\Desktop\pfa\backend\src\controllers\contractController.js:63:35)
+    at Layer.handle [as handle_request] (C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\NABIL\Desktop\pfa\backend\node_modules\express\lib\router\index.js:280:10)
+    at authenticate (C:\Users\NABIL\Desktop\pfa\backend\src\middleware\auth.js:38:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+Body: {"propertyId":"2","tenantId":"222","rentAmount":"1","durationMonths":12,"depositAmount":"0.001","terms":"Standard rental agreement terms and conditions."}

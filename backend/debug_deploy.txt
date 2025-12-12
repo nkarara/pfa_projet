@@ -1,0 +1,5 @@
+Attempting deployment...
+Landlord: 0x196D5069Eb22daDF202d0aF5837f4210AEbAF1d6
+Tenant: 0xdd644c8650401181352dba2ff49ef7a0359cb433
+Params: Rent=0.7, Deposit=0.2, Duration=12, Property=re
+✅ Deployment successful

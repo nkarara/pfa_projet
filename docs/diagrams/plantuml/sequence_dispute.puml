@@ -1,0 +1,86 @@
+@startuml Sequence_Litige
+
+title Séquence : Dépôt et Résolution de Litige
+
+actor "Utilisateur" as User
+actor "Administrateur" as Admin
+participant "Frontend" as UI
+participant "DisputeController" as Ctrl
+participant "BlockchainService" as BC
+database "PostgreSQL" as DB
+participant "Ganache" as Chain
+participant "DisputeManager.sol" as SC
+
+== Dépôt du Litige ==
+User -> UI: Créer nouveau litige
+UI -> UI: Formulaire (contrat, description)
+User -> UI: Soumettre
+
+UI -> Ctrl: POST /api/disputes
+Ctrl -> DB: SELECT contract
+DB --> Ctrl: Contract data
+
+Ctrl -> BC: getContractInstance()
+BC --> Ctrl: DisputeManager instance
+
+Ctrl -> BC: fileDispute(description)
+BC -> Chain: Send transaction
+Chain -> SC: fileDispute(description)
+
+SC -> SC: require(sender == landlord || tenant)
+SC -> SC: disputeCount++
+SC -> SC: Create dispute (status = PENDING)
+SC -> SC: emit DisputeFiled(disputeId)
+
+Chain --> BC: Transaction receipt
+BC --> Ctrl: disputeIndex + transactionHash
+
+Ctrl -> DB: INSERT dispute
+DB --> Ctrl: Dispute créé
+
+Ctrl --> UI: 201 Created
+UI --> User: Litige déposé ✓
+
+== Résolution du Litige ==
+Admin -> UI: Accès litiges ouverts
+UI -> Ctrl: GET /api/disputes?status=open
+Ctrl -> DB: SELECT disputes
+DB --> Ctrl: Liste litiges
+Ctrl --> UI: Litiges ouverts
+UI --> Admin: Affichage
+
+Admin -> UI: Sélectionner litige + résolution
+UI -> Ctrl: PUT /api/disputes/:id/resolve
+
+Ctrl -> DB: SELECT dispute + contract
+DB --> Ctrl: Dispute data
+
+Ctrl -> BC: getContractInstance()
+BC --> Ctrl: DisputeManager instance
+
+Ctrl -> BC: resolveDispute(disputeId, resolution)
+BC -> Chain: Send transaction
+Chain -> SC: resolveDispute(id, resolution)
+
+SC -> SC: require(sender == arbitrator)
+SC -> SC: dispute.status = RESOLVED
+SC -> SC: dispute.resolution = resolution
+SC -> SC: emit DisputeResolved(id, resolution)
+
+alt LANDLORD_WINS
+    SC -> SC: Action propriétaire
+else TENANT_WINS
+    SC -> SC: Action locataire
+end
+
+Chain --> BC: Transaction receipt
+BC --> Ctrl: transactionHash
+
+Ctrl -> DB: UPDATE status = 'resolved', resolution
+DB --> Ctrl: Dispute résolu
+
+Ctrl --> UI: 200 OK
+UI --> Admin: Litige résolu ✓
+UI --> User: Notification résolution
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+
+title Séquence : Création de Contrat
+
+actor Propriétaire
+actor Locataire
+participant API
+participant Blockchain
+
+Propriétaire -> API: Créer contrat
+API --> Propriétaire: Contrat créé
+
+Propriétaire -> API: Signer
+API --> Propriétaire: Signature OK
+
+Locataire -> API: Signer
+API -> Blockchain: Déployer smart contract
+Blockchain --> API: Adresse contrat
+API --> Locataire: Contrat actif
+
+@enduml

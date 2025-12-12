@@ -1,0 +1,155 @@
+@startuml
+
+title Séquence Détaillée : Authentification (Inscription et Connexion)
+
+autonumber
+skinparam sequenceMessageAlign center
+
+actor "Utilisateur" as User
+participant "Frontend\nReact" as UI
+participant "AuthController" as Auth
+participant "User Model\nSequelize" as Model
+database "PostgreSQL" as DB
+participant "bcrypt" as Bcrypt
+participant "JWT Service" as JWT
+
+== Phase 1 : Inscription ==
+
+User -> UI: Remplir formulaire inscription\n(email, password, firstName, lastName, role)
+activate UI
+
+UI -> UI: Valider format email
+UI -> UI: Vérifier force du mot de passe
+
+UI -> Auth: POST /api/auth/register\n{email, password, firstName, lastName, role}
+activate Auth
+
+Auth -> Model: findOne({where: {email}})
+activate Model
+Model -> DB: SELECT * FROM users\nWHERE email = ?
+activate DB
+DB --> Model: Résultat de la requête
+deactivate DB
+
+alt Email déjà utilisé
+    Model --> Auth: User existe
+    deactivate Model
+    Auth --> UI: 400 Bad Request\n{error: "Email déjà utilisé"}
+    deactivate Auth
+    UI --> User: Afficher message d'erreur
+    deactivate UI
+    
+else Email disponible
+    Model --> Auth: null (email disponible)
+    deactivate Model
+    
+    Auth -> Model: beforeCreate Hook déclenché
+    activate Model
+    Model -> Bcrypt: genSalt(10)
+    activate Bcrypt
+    Bcrypt --> Model: salt généré
+    Model -> Bcrypt: hash(password, salt)
+    Bcrypt --> Model: passwordHash
+    deactivate Bcrypt
+    
+    Model -> DB: INSERT INTO users\n(email, passwordHash, firstName, lastName, role)
+    activate DB
+    DB --> Model: User créé avec id
+    deactivate DB
+    Model --> Auth: User object (sans password)
+    deactivate Model
+    
+    Auth -> JWT: generateToken(user.id, user.role)
+    activate JWT
+    JWT -> JWT: sign({id, role}, SECRET, {expiresIn: '7d'})
+    JWT --> Auth: JWT token
+    deactivate JWT
+    
+    Auth --> UI: 201 Created\n{token, user: {id, email, firstName, lastName, role}}
+    deactivate Auth
+    
+    UI -> UI: localStorage.setItem('token', token)
+    UI -> UI: Context.setUser(user)
+    UI -> UI: Rediriger vers Dashboard
+    UI --> User: Inscription réussie ✓
+    deactivate UI
+end
+
+|||
+
+== Phase 2 : Connexion ==
+
+User -> UI: Entrer email et mot de passe
+activate UI
+
+UI -> Auth: POST /api/auth/login\n{email, password}
+activate Auth
+
+Auth -> Model: findOne({where: {email}})
+activate Model
+Model -> DB: SELECT * FROM users\nWHERE email = ?
+activate DB
+DB --> Model: User data (avec passwordHash)
+deactivate DB
+
+alt User non trouvé
+    Model --> Auth: null
+    deactivate Model
+    Auth --> UI: 401 Unauthorized\n{error: "Email ou mot de passe invalide"}
+    deactivate Auth
+    UI --> User: Afficher erreur
+    deactivate UI
+    
+else User trouvé
+    Model --> Auth: User object
+    deactivate Model
+    
+    Auth -> Model: user.comparePassword(password)
+    activate Model
+    Model -> Bcrypt: compare(password, user.passwordHash)
+    activate Bcrypt
+    Bcrypt --> Model: boolean (match ou non)
+    deactivate Bcrypt
+    
+    alt Mot de passe incorrect
+        Model --> Auth: false
+        deactivate Model
+        Auth --> UI: 401 Unauthorized\n{error: "Email ou mot de passe invalide"}
+        deactivate Auth
+        UI --> User: Afficher erreur
+        deactivate UI
+        
+    else Mot de passe correct
+        Model --> Auth: true
+        deactivate Model
+        
+        Auth -> JWT: generateToken(user.id, user.role)
+        activate JWT
+        JWT --> Auth: JWT token
+        deactivate JWT
+        
+        Auth -> Model: user.toSafeObject()
+        activate Model
+        Model --> Auth: User sans passwordHash
+        deactivate Model
+        
+        Auth --> UI: 200 OK\n{token, user: {id, email, firstName, lastName, role, blockchainAddress}}
+        deactivate Auth
+        
+        UI -> UI: localStorage.setItem('token', token)
+        UI -> UI: Context.setUser(user)
+        UI -> UI: Rediriger vers Dashboard
+        UI --> User: Connexion réussie ✓\nBienvenue {firstName}
+        deactivate UI
+    end
+end
+
+note right User
+  Le token JWT est stocké
+  dans localStorage et sera
+  envoyé dans le header
+  Authorization pour toutes
+  les requêtes futures
+end note
+
+@enduml

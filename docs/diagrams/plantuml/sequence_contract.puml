@@ -1,0 +1,56 @@
+@startuml Sequence_Creation_Contrat
+
+title Séquence : Création et Signature de Contrat
+
+actor "Propriétaire" as Landlord
+actor "Locataire" as Tenant
+participant "Frontend" as UI
+participant "ContractController" as Ctrl
+participant "BlockchainService" as BC
+database "PostgreSQL" as DB
+participant "Ganache" as Chain
+
+== Création du Contrat ==
+Landlord -> UI: Créer nouveau contrat
+UI -> Ctrl: POST /api/contracts
+Ctrl -> DB: INSERT contract (status: draft)
+DB --> Ctrl: Contract créé
+Ctrl --> UI: 201 Created
+UI --> Landlord: Contrat créé
+
+== Signature Propriétaire ==
+Landlord -> UI: Signer contrat
+UI -> Ctrl: POST /api/contracts/:id/sign
+Ctrl -> DB: UPDATE landlordSigned = true
+DB --> Ctrl: Mis à jour
+Ctrl --> UI: 200 OK
+UI --> Landlord: Signature enregistrée
+
+== Signature Locataire ==
+Tenant -> UI: Signer contrat
+UI -> Ctrl: POST /api/contracts/:id/sign
+Ctrl -> DB: UPDATE tenantSigned = true
+
+== Déploiement Smart Contracts ==
+Ctrl -> BC: deployRentalContract()
+BC -> Chain: Deploy transaction
+Chain --> BC: Contract address
+BC --> Ctrl: smartContractAddress
+
+Ctrl -> BC: deployPaymentManager()
+BC -> Chain: Deploy transaction
+Chain --> BC: Contract address
+BC --> Ctrl: paymentManagerAddress
+
+Ctrl -> BC: deployDisputeManager()
+BC -> Chain: Deploy transaction
+Chain --> BC: Contract address
+BC --> Ctrl: disputeManagerAddress
+
+Ctrl -> DB: UPDATE addresses + status = 'active'
+DB --> Ctrl: Contrat actif
+Ctrl --> UI: 200 OK
+UI --> Tenant: Contrat actif ✓
+UI --> Landlord: Notification contrat actif
+
+@enduml
