@@ -1,196 +1,323 @@
 .contract-details-container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 2rem;
-    animation: fadeIn 0.4s ease;
+    padding: 2.5rem 2rem;
+    animation: fadeIn 0.5s ease-out;
 }
 
-.contract-header {
+.contract-details-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
-.contract-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
+.contract-details-header h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
     color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     margin-bottom: 0.5rem;
 }
 
-.contract-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.info-section {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-}
-
-.info-section h2 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-}
-
-.info-item label {
-    display: block;
+.contract-details-header .contract-id {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
 }
 
-.info-item p {
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 1rem;
+.contract-status-large {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.info-item small {
-    display: block;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-}
-
-.info-item .amount {
-    font-size: 1.2rem;
-    color: var(--primary-light);
-}
-
-.signed-badge {
-    display: inline-block;
-    margin-top: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    background: rgba(16, 185, 129, 0.2);
+.contract-status-large.active {
+    background: rgba(16, 185, 129, 0.15);
     color: var(--success);
     border: 1px solid rgba(16, 185, 129, 0.3);
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    font-weight: 600;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
 
-.terms-box {
-    background: var(--bg-tertiary);
+.contract-status-large.pending_signature {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.contract-status-large.draft {
+    background: rgba(107, 114, 128, 0.15);
+    color: var(--text-muted);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
 }
 
-.blockchain-info {
+.contract-status-large.terminated {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Blockchain Address Banner */
+.blockchain-banner {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 214, 160, 0.05) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 1rem;
 }
 
-.blockchain-info code {
-    display: block;
-    background: var(--bg-tertiary);
-    padding: 0.75rem;
-    border-radius: var(--radius);
-    font-size: 0.85rem;
+.blockchain-banner svg {
     color: var(--primary-light);
-    word-break: break-all;
-    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
-.signing-section {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
-    border: 2px solid rgba(99, 102, 241, 0.3);
+.blockchain-banner .content {
+    flex: 1;
+}
+
+.blockchain-banner .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.blockchain-banner .address {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--primary-light);
+    word-break: break-all;
+}
+
+.blockchain-banner button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+}
+
+.blockchain-banner button:hover {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--primary-light);
+}
+
+/* Database Mode Warning */
+.database-warning {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--warning);
+    font-weight: 500;
+}
+
+/* Details Grid */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.details-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+}
+
+.details-card h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.details-card h2 svg {
+    color: var(--primary-light);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row .label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.detail-row .value {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.detail-row .value.amount {
+    color: var(--primary-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+}
+
+/* Signature Section */
+.signature-section {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.signature-section h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.signature-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.signature-card {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all var(--transition);
+}
+
+.signature-card.signed {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.signature-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.signature-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.signature-status.signed {
+    color: var(--success);
+}
+
+.signature-status.unsigned {
+    color: var(--text-muted);
+}
+
+.signature-card button {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* Actions Section */
+.contract-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.contract-actions button {
+    flex: 1;
+}
+
+/* Terms Section */
+.terms-section {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: 2rem;
 }
 
-.signing-section h2 {
-    margin-bottom: 1.5rem;
+.terms-section h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
 }
 
-.info-box {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: var(--radius);
-    padding: 1rem 1.5rem;
-    color: #60a5fa;
-    margin-bottom: 1.5rem;
-}
-
-.btn-large {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    width: 100%;
-}
-
-.payments-preview {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.payment-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    font-size: 0.9rem;
-}
-
-.payment-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: capitalize;
-}
-
-.payment-status.pending {
-    background: rgba(107, 114, 128, 0.2);
-    color: var(--text-muted);
-}
-
-.payment-status.paid {
-    background: rgba(16, 185, 129, 0.2);
-    color: var(--success);
+.terms-content {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    white-space: pre-wrap;
 }
 
 @media (max-width: 768px) {
     .contract-details-container {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
     }
 
-    .contract-header {
+    .contract-details-header {
         flex-direction: column;
         gap: 1rem;
     }
 
-    .info-grid {
+    .contract-details-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .details-grid {
         grid-template-columns: 1fr;
     }
 
-    .info-section {
-        padding: 1.5rem;
+    .signature-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .contract-actions {
+        flex-direction: column;
+    }
+
+    .blockchain-banner {
+        flex-direction: column;
+        text-align: center;
     }
 }

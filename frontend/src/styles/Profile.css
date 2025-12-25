@@ -1,194 +1,250 @@
 .profile-container {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 2.5rem 2rem;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .profile-header {
-    margin-bottom: 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
 }
 
 .profile-header h1 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--primary);
+    font-size: 2.25rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 50%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 0.5rem;
 }
 
 .profile-header p {
-    color: var(--text-secondary);
+    color: var(--text-muted);
 }
 
-.profile-content {
-    display: grid;
-    gap: 2rem;
-}
-
-.profile-section {
-    background: var(--bg-secondary);
+.profile-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.profile-section h2 {
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
+.profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+.profile-card h2 {
     font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+.profile-card h2 svg {
+    color: var(--primary-light);
 }
 
-.form-group {
+.profile-form {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.5rem;
 }
 
-.form-group.full-width {
-    grid-column: 1 / -1;
+.profile-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
 }
 
-.form-group label {
-    font-weight: 500;
+.profile-form .form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
     color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.profile-form input {
+    padding: 1rem;
+}
+
+/* Blockchain Address Display */
+.blockchain-section {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 214, 160, 0.05) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.blockchain-section h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.form-group input {
-    padding: 0.75rem;
-    background: var(--bg-tertiary);
-    /* Distinct from card bg */
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
+.blockchain-address-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
     color: var(--text-primary);
-    transition: all 0.2s;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.form-hint {
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    display: block;
-    margin-top: 0.25rem;
-}
-
-.btn-primary,
-.btn-secondary {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
+    background: var(--bg-tertiary);
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius);
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
+    gap: 1rem;
+    word-break: break-all;
 }
 
-.btn-primary {
-    background: var(--primary);
-    color: white;
+.blockchain-address-display button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    flex-shrink: 0;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+.blockchain-address-display button:hover {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--primary-light);
 }
 
-.btn-secondary {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover:not(:disabled) {
-    background: var(--bg-primary);
-    border-color: var(--primary);
-}
-
-.btn-primary:disabled,
-.btn-secondary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.info-section {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-    border: 1px solid var(--border-color);
-}
-
-.info-section h2 {
-    color: var(--text-primary);
-}
-
-.info-grid {
+/* Account Information */
+.account-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    background: var(--bg-tertiary);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
 }
 
-.info-item label {
-    opacity: 0.9;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+.info-item .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.375rem;
 }
 
-.info-item p {
-    font-size: 1.125rem;
+.info-item .value {
     font-weight: 600;
     color: var(--text-primary);
 }
 
-.role-badge {
-    background: rgba(99, 102, 241, 0.1);
+.info-item .value.role {
     color: var(--primary-light);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    display: inline-block;
-    font-size: 1rem !important;
     text-transform: capitalize;
-    border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
-.status-active {
-    color: var(--success);
+/* Password Section */
+.password-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.password-section h3 {
+    font-size: 1rem;
     font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+}
+
+/* Save Button */
+.profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.profile-actions button {
+    min-width: 150px;
+}
+
+/* Success Message */
+.success-message {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 214, 160, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    color: var(--success);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.error-message {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    color: var(--danger);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.3s ease;
 }
 
 @media (max-width: 768px) {
     .profile-container {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
     }
 
-    .profile-section {
-        padding: 1.5rem;
+    .profile-header h1 {
+        font-size: 1.875rem;
     }
 
-    .form-grid {
+    .profile-card {
+        padding: 1.75rem;
+    }
+
+    .profile-form .form-row {
         grid-template-columns: 1fr;
+    }
+
+    .account-info {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions button {
+        width: 100%;
     }
 }

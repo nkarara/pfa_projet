@@ -1,111 +1,169 @@
 .dashboard-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
-    animation: fadeIn 0.4s ease;
+    padding: 2.5rem 2rem;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .dashboard-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .dashboard-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    font-size: 2.75rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 50%, var(--secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    letter-spacing: -0.02em;
 }
 
 .role-badge {
-    padding: 0.5rem 1rem;
-    background: var(--bg-tertiary);
+    padding: 0.625rem 1.25rem;
+    background: var(--glass-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--primary-light);
+    text-transform: capitalize;
+    backdrop-filter: blur(10px);
 }
 
 .wallet-connect-banner {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
     border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    animation: fadeIn 0.4s ease;
+    animation: fadeInUp 0.5s ease-out;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.1);
 }
 
 .wallet-connect-banner p {
     color: var(--danger);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .wallet-info {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 214, 160, 0.1) 100%);
     border: 1px solid rgba(16, 185, 129, 0.3);
     border-radius: var(--radius-lg);
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: fadeInUp 0.5s ease-out;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.1);
+}
+
+.wallet-info svg {
+    color: var(--success);
+    flex-shrink: 0;
 }
 
 .wallet-info strong {
     color: var(--success);
 }
 
+.wallet-info code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
 }
 
 .stat-card {
-    background: var(--bg-secondary);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 1.5rem;
+    padding: 1.75rem;
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    transition: all 0.3s ease;
+    transition: all var(--transition);
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0;
+    transition: opacity var(--transition);
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary);
+    transform: translateY(-6px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+}
+
+.stat-card:hover::before {
+    opacity: 1;
 }
 
 .stat-icon {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.625rem;
     color: white;
     flex-shrink: 0;
+    position: relative;
+}
+
+.stat-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    filter: blur(15px);
+    opacity: 0.4;
+    z-index: -1;
 }
 
 .stat-content h3 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.25rem;
+    font-weight: 800;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.375rem;
+    letter-spacing: -0.02em;
 }
 
 .stat-content p {
     color: var(--text-muted);
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .contracts-section {
@@ -115,78 +173,114 @@
 .contracts-section h2 {
     font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
     color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.contracts-section h2 svg {
+    color: var(--primary-light);
 }
 
 .contracts-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 1.5rem;
 }
 
 .contract-card {
-    background: var(--bg-secondary);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    transition: all 0.3s ease;
+    padding: 1.75rem;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.contract-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--transition);
 }
 
 .contract-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary);
+    transform: translateY(-4px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+}
+
+.contract-card:hover::before {
+    opacity: 1;
 }
 
 .contract-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
 }
 
 .contract-header h3 {
-    font-size: 1.1rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-primary);
+    line-height: 1.4;
 }
 
 .status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-sm);
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius);
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: capitalize;
+    letter-spacing: 0.02em;
 }
 
 .status-active {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(16, 185, 129, 0.15);
     color: var(--success);
     border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
 }
 
 .status-pending_signature,
 .status-draft {
-    background: rgba(245, 158, 11, 0.2);
+    background: rgba(251, 191, 36, 0.15);
     color: var(--warning);
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    animation: pulse 2s ease-in-out infinite;
 }
 
 .status-terminated {
-    background: rgba(107, 114, 128, 0.2);
+    background: rgba(107, 114, 128, 0.15);
     color: var(--text-muted);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(107, 114, 128, 0.3);
 }
 
 .contract-details {
     margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .contract-details p {
     color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.625rem;
     font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
 }
 
 .contract-details strong {
@@ -195,25 +289,35 @@
 
 .empty-state {
     text-align: center;
-    padding: 4rem 2rem;
-    background: var(--bg-secondary);
-    border: 1px dashed var(--border-color);
-    border-radius: var(--radius-lg);
+    padding: 5rem 2rem;
+    background: var(--glass-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-xl);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.empty-state svg {
+    font-size: 4rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
 }
 
 .empty-state p {
     color: var(--text-muted);
-    font-size: 1.1rem;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
 }
 
 .empty-state-hint {
-    margin-top: 0.5rem;
-    font-size: 0.9rem !important;
+    font-size: 0.95rem !important;
+    color: var(--text-muted);
+    opacity: 0.7;
 }
 
 @media (max-width: 768px) {
     .dashboard-container {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
     }
 
     .dashboard-header {
@@ -237,5 +341,20 @@
     .wallet-connect-banner {
         flex-direction: column;
         gap: 1rem;
+        text-align: center;
+    }
+
+    .stat-card {
+        padding: 1.25rem;
+    }
+
+    .stat-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 1.4rem;
+    }
+
+    .stat-content h3 {
+        font-size: 1.75rem;
     }
 }

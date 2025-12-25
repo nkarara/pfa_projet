@@ -1,121 +1,229 @@
 .properties-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
-    animation: fadeIn 0.4s ease;
+    padding: 2.5rem 2rem;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .properties-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .properties-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.25rem;
+    font-weight: 800;
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.875rem;
+}
+
+.properties-header h1 svg {
+    color: var(--accent);
+    filter: drop-shadow(0 0 10px rgba(245, 158, 66, 0.4));
 }
 
 .properties-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
+    gap: 1.75rem;
 }
 
 .property-card {
-    background: var(--bg-secondary);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    transition: all 0.3s ease;
+    overflow: hidden;
+    transition: all var(--transition);
     position: relative;
 }
 
-.property-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary);
+.property-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--primary), var(--accent));
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity var(--transition);
 }
 
-.property-status {
+.property-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+}
+
+.property-card:hover::before {
+    opacity: 1;
+    animation: shimmer 2s linear infinite;
+}
+
+.property-image {
+    height: 200px;
+    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.property-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.property-image svg {
+    font-size: 4rem;
+    color: var(--text-muted);
+    opacity: 0.3;
+}
+
+.property-image .availability-badge {
     position: absolute;
     top: 1rem;
     right: 1rem;
-}
-
-.badge {
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
     font-size: 0.8rem;
     font-weight: 600;
-    text-transform: capitalize;
+    backdrop-filter: blur(10px);
 }
 
-.badge.available {
-    background: rgba(16, 185, 129, 0.2);
-    color: var(--success);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+.availability-badge.available {
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
 }
 
-.badge.rented {
-    background: rgba(245, 158, 11, 0.2);
-    color: var(--warning);
-    border: 1px solid rgba(245, 158, 11, 0.3);
+.availability-badge.rented {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
 }
 
-.property-info h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
+.property-content {
+    padding: 1.5rem;
+}
+
+.property-content h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    padding-right: 100px;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.property-address {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .property-details {
-    margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.property-details p {
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+.property-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
-.property-details strong {
+.property-detail .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.property-detail .value {
+    font-weight: 600;
     color: var(--text-primary);
 }
 
-.property-description {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
+.property-detail .value.price {
+    color: var(--primary-light);
+    font-size: 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .property-actions {
     display: flex;
     gap: 0.75rem;
-    margin-top: 1.5rem;
 }
 
 .property-actions button {
     flex: 1;
-    padding: 0.6rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
 }
 
-/* Modal */
+/* Add Property Form */
+.add-property-form {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.add-property-form h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+}
+
+.form-grid .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Empty State */
+.empty-properties {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: var(--glass-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-xl);
+}
+
+.empty-properties svg {
+    font-size: 5rem;
+    color: var(--text-muted);
+    opacity: 0.3;
+    margin-bottom: 1.5rem;
+}
+
+.empty-properties p {
+    color: var(--text-muted);
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -123,53 +231,43 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .modal-content {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     padding: 2rem;
+    width: 100%;
     max-width: 600px;
-    width: 90%;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: var(--shadow-xl);
-    animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    animation: fadeInUp 0.3s ease-out;
 }
 
 .modal-content h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
     margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.5rem;
 }
 
 .modal-actions {
     display: flex;
+    justify-content: flex-end;
     gap: 1rem;
     margin-top: 2rem;
 }
 
-.modal-actions button {
-    flex: 1;
+.form-group {
+    margin-bottom: 1.25rem;
 }
 
 .form-row {
@@ -178,14 +276,9 @@
     gap: 1rem;
 }
 
-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
 @media (max-width: 768px) {
     .properties-container {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
     }
 
     .properties-header {
@@ -194,7 +287,19 @@ textarea {
         gap: 1rem;
     }
 
+    .properties-header h1 {
+        font-size: 1.75rem;
+    }
+
     .properties-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .property-details {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
         grid-template-columns: 1fr;
     }
 
@@ -203,6 +308,7 @@ textarea {
     }
 
     .modal-content {
+        margin: 1rem;
         padding: 1.5rem;
     }
 }

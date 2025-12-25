@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWeb3 } from '../contexts/Web3Context';
-import { FaWallet, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaWallet, FaUserCircle, FaSignOutAlt, FaSun, FaMoon } from 'react-icons/fa';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
     const { account, isConnected, connectWallet } = useWeb3();
     const navigate = useNavigate();
+
+    // Theme toggle state
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const saved = localStorage.getItem('theme');
+        return saved ? saved === 'dark' : true; // Default to dark
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    }, [isDarkMode]);
+
+    const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+    };
 
     const handleLogout = () => {
         logout();
@@ -39,6 +54,16 @@ const Navbar = () => {
                 )}
 
                 <div className="navbar-actions">
+                    {/* Theme Toggle Button */}
+                    <button
+                        className="theme-toggle"
+                        onClick={toggleTheme}
+                        aria-label="Toggle theme"
+                        title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                    >
+                        {isDarkMode ? <FaSun /> : <FaMoon />}
+                    </button>
+
                     {user ? (
                         <>
                             {isConnected ? (

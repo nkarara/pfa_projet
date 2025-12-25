@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Web3Provider } from './contexts/Web3Context';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './styles/theme.css';
 
 // Components
 import Navbar from './components/Navbar';

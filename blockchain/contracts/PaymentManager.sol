@@ -118,7 +118,7 @@ contract PaymentManager {
     /**
      * @dev Pay rent for the next due payment
      */
-    function payRent() external payable onlyTenant {
+    function payRent() external payable {
         require(nextPaymentDue < paymentCount, "No more payments due");
         
         Payment storage payment = payments[nextPaymentDue];
